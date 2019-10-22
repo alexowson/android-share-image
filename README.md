@@ -1,4 +1,4 @@
-Sharing a image
+Sharing a image in Android
 =
 
 This example shows how to share a image to other apps or saving it to gallery.
