@@ -42,5 +42,7 @@ dependencies {
 
     implementation "com.jakewharton:butterknife:${butterKnifeVersion}"
 
+    implementation 'com.github.esafirm.android-image-picker:imagepicker:1.13.1'
+
     annotationProcessor "com.jakewharton:butterknife-compiler:${butterKnifeVersion}"
 }

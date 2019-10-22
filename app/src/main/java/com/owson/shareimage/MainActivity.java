@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.esafirm.imagepicker.features.ImagePicker;
+import com.esafirm.imagepicker.model.Image;
 import com.facebook.binaryresource.BinaryResource;
 import com.facebook.cache.common.CacheKey;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -26,6 +28,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -39,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final int SHARE_STORAGE_PERMS_REQUEST_CODE = 900;
     private final int SAVE_STORAGE_PERMS_REQUEST_CODE = 901;
+    private final int RESULT_LOAD_IMG_REQUEST_CODE = 778;
 
     private final String[] perms = { android.Manifest.permission.WRITE_EXTERNAL_STORAGE,  android.Manifest.permission.READ_EXTERNAL_STORAGE};
 
@@ -56,6 +60,19 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         imageView.setImageURI(Uri.parse(IMAGE_URL));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == RESULT_LOAD_IMG_REQUEST_CODE  && resultCode == RESULT_OK) {
+            List<Image> images =  ImagePicker.getImages(data);
+
+            if(images.size() > 0) {
+                imageView.setImageURI(Uri.fromFile(new File(images.get(0).getPath())));
+            }
+        }
     }
 
     @OnClick(R.id.shareButton)
@@ -86,6 +103,11 @@ public class MainActivity extends AppCompatActivity {
                     SAVE_STORAGE_PERMS_REQUEST_CODE,
                     perms);
         }
+    }
+
+    @OnClick(R.id.loadImageButton)
+    void onLoadImageButtonClick() {
+        loadPhotoFromGallery();
     }
 
     @AfterPermissionGranted(SHARE_STORAGE_PERMS_REQUEST_CODE)
@@ -215,5 +237,14 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return bmpUri;
+    }
+
+    private void loadPhotoFromGallery(){
+        ImagePicker.create(this)
+                .folderMode(false)
+                .single()
+                .showCamera(false)
+                .enableLog(false)
+                .start(RESULT_LOAD_IMG_REQUEST_CODE);
     }
 }

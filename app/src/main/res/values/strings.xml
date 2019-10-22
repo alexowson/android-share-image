@@ -2,6 +2,7 @@
     <string name="app_name">shareimage</string>
     <string name="share">Share</string>
     <string name="save_to_gallery">Save to gallery</string>
+    <string name="load_from_gallery">Load from gallery</string>
 
     <string name="image_could_not_be_created">Image could not be created</string>
     <string name="image_saved" formatted="false">Image saved to folder: %s</string>
