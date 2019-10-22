@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     void onShareTouched() {
         boolean has_perms = EasyPermissions.hasPermissions(MainActivity.this, perms);
         if (has_perms)
-            shareImage();
+            shareImageFromUrl(IMAGE_URL);
         else {
             EasyPermissions.requestPermissions(
                     MainActivity.this,
@@ -89,13 +89,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @AfterPermissionGranted(SHARE_STORAGE_PERMS_REQUEST_CODE)
-    private void shareImage() {
-        Bitmap bmp = getBitmapFromUrl(IMAGE_URL);
+    private void shareImageFromUrl(String url) {
+        Bitmap bmp = getBitmapFromUrl(url);
         if(bmp == null) {
             //Show no bitmap message
             return;
         }
+        shareImageFromBitmap(bmp);
+    }
 
+    private void shareImageFromBitmap(Bitmap bmp) {
         Uri uri = getUriImageFromBitmap(bmp, MainActivity.this);
         if(uri == null) {
             //Show no URI message
