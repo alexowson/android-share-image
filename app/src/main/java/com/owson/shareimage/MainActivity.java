@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String IMAGE_URL = "https://ichef.bbci.co.uk/images/ic/720x405/p0517py6.jpg";
 
+    private Bitmap bmp;
+
     @BindView(R.id.imageView)
     SimpleDraweeView imageView;
 
@@ -59,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+//        Uri imageUri = Uri.parse(IMAGE_URL);
+        bmp = getBitmapFromUrl(IMAGE_URL);
         imageView.setImageURI(Uri.parse(IMAGE_URL));
     }
 
@@ -70,7 +74,11 @@ public class MainActivity extends AppCompatActivity {
             List<Image> images =  ImagePicker.getImages(data);
 
             if(images.size() > 0) {
-                imageView.setImageURI(Uri.fromFile(new File(images.get(0).getPath())));
+                String imagePath = images.get(0).getPath();
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                bmp = BitmapFactory.decodeFile(imagePath, options);
+                imageView.setImageURI(Uri.fromFile(new File(imagePath)));
             }
         }
     }
@@ -78,9 +86,10 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.shareButton)
     void onShareTouched() {
         boolean has_perms = EasyPermissions.hasPermissions(MainActivity.this, perms);
-        if (has_perms)
-            shareImageFromUrl(IMAGE_URL);
-        else {
+        if (has_perms) {
+//            shareImageFromUrl(IMAGE_URL);
+            shareImageFromBitmap(this.bmp);
+        } else {
             EasyPermissions.requestPermissions(
                     MainActivity.this,
                     getString(R.string.rationale_storage),
@@ -120,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
         shareImageFromBitmap(bmp);
     }
 
+    @AfterPermissionGranted(SHARE_STORAGE_PERMS_REQUEST_CODE)
     private void shareImageFromBitmap(Bitmap bmp) {
         Uri uri = getUriImageFromBitmap(bmp, MainActivity.this);
         if(uri == null) {
